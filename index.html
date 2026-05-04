@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Git & GitHub Cheat Sheet</title>
+  <meta name="description" content="A searchable Git and GitHub cheat sheet with commands, workflows, GitHub CLI, Actions, copy buttons, and favorites.">
+  <meta property="og:title" content="Git & GitHub Cheat Sheet">
+  <meta property="og:description" content="Commands, workflows, GitHub CLI, and Actions in one interactive reference.">
+  <meta property="og:type" content="website">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --panel: #161b22;
+      --panel-2: #0f1720;
+      --text: #f0f6fc;
+      --muted: #8b949e;
+      --border: #30363d;
+      --accent: #238636;
+      --accent-2: #2f81f7;
+      --danger: #f85149;
+      --code: #101820;
+      --shadow: 0 16px 42px rgba(1, 4, 9, .35);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      --sans: "Aptos", "Segoe UI", system-ui, sans-serif;
+    }
+
+    [data-theme="light"] {
+      --bg: #f6f8fa;
+      --panel: #ffffff;
+      --panel-2: #eef3f8;
+      --text: #1f2328;
+      --muted: #59636e;
+      --border: #d0d7de;
+      --accent: #1a7f37;
+      --accent-2: #0969da;
+      --danger: #cf222e;
+      --code: #f6f8fa;
+      --shadow: 0 16px 32px rgba(31, 35, 40, .09);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      line-height: 1.5;
+    }
+
+    button, input { font: inherit; }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 24px 18px;
+      background: color-mix(in srgb, var(--panel) 92%, transparent);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+    }
+
+    .brand {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+      font-family: var(--mono);
+      font-weight: 800;
+      box-shadow: var(--shadow);
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      margin-bottom: 2px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .tagline {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 0;
+    }
+
+    .search {
+      position: relative;
+      margin-bottom: 14px;
+    }
+
+    .search input {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px 10px 36px;
+      color: var(--text);
+      background: var(--bg);
+      outline: none;
+    }
+
+    .search input:focus {
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-2) 24%, transparent);
+    }
+
+    .search svg {
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      width: 18px;
+      height: 18px;
+      color: var(--muted);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .control-btn,
+    .copy-btn,
+    .favorite-btn,
+    .tab {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--text);
+      cursor: pointer;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+
+    .control-btn {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      font-size: 13px;
+    }
+
+    .control-btn:hover,
+    .copy-btn:hover,
+    .favorite-btn:hover,
+    .tab:hover {
+      border-color: var(--accent-2);
+      transform: translateY(-1px);
+    }
+
+    .tabs {
+      display: grid;
+      gap: 6px;
+    }
+
+    .tab {
+      min-height: 38px;
+      padding: 8px 10px;
+      text-align: left;
+      color: var(--muted);
+    }
+
+    .tab.active {
+      color: #fff;
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    main {
+      min-width: 0;
+      padding: 34px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr);
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+
+    .hero-copy {
+      padding: 30px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, transparent), transparent 42%),
+        var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .hero h2 {
+      margin-bottom: 12px;
+      font-size: clamp(32px, 5vw, 58px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 64ch;
+      color: var(--muted);
+      margin-bottom: 0;
+      font-size: 17px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .stat {
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      min-height: 108px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .section {
+      margin: 0 0 28px;
+      scroll-margin-top: 18px;
+    }
+
+    .section-header {
+      display: flex;
+      gap: 12px;
+      align-items: end;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .section h2 {
+      margin-bottom: 0;
+      font-size: 24px;
+      letter-spacing: 0;
+    }
+
+    .section-count {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 12px;
+    }
+
+    .command {
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: 0 1px 0 rgba(255,255,255,.02) inset;
+      overflow: hidden;
+    }
+
+    .command-top {
+      min-height: 54px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      gap: 8px;
+      align-items: center;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .scenario {
+      min-width: 0;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .favorite-btn,
+    .copy-btn {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+    }
+
+    .favorite-btn.active {
+      color: #f2cc60;
+      border-color: #9e6a03;
+      background: color-mix(in srgb, #f2cc60 12%, var(--panel));
+    }
+
+    pre {
+      margin: 0;
+      padding: 14px;
+      background: var(--code);
+      overflow-x: auto;
+    }
+
+    code {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text);
+      white-space: pre;
+    }
+
+    .note {
+      min-height: 44px;
+      padding: 10px 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .empty {
+      display: none;
+      padding: 26px;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      text-align: center;
+      background: var(--panel);
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: #fff;
+      background: var(--accent);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+      z-index: 20;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 900px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar {
+        position: static;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .tabs {
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      }
+      main { padding: 22px 16px; }
+      .hero { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      .hero-copy { padding: 22px; }
+      .stats { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
+      .section-header {
+        align-items: start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Cheat sheet navigation">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">git</div>
+        <div>
+          <h1>Git & GitHub</h1>
+          <p class="tagline">Scenario-based command reference</p>
+        </div>
+      </div>
+
+      <label class="search">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.15a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="search" type="search" placeholder="Search commands..." autocomplete="off">
+      </label>
+
+      <div class="controls">
+        <button class="control-btn" id="themeToggle" type="button" title="Toggle theme">Theme</button>
+        <button class="control-btn" id="favoritesToggle" type="button" title="Show favorites">Favorites</button>
+      </div>
+
+      <nav class="tabs" id="tabs"></nav>
+    </aside>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <h2 id="hero-title">Find the Git command for the situation in front of you.</h2>
+          <p>Search, copy, favorite, and jump between Git basics, branching, remotes, undo flows, GitHub CLI, and Actions without leaving the page.</p>
+        </div>
+        <div class="stats" aria-label="Cheat sheet coverage">
+          <div class="stat"><strong id="commandCount">0</strong><span>commands and workflow snippets</span></div>
+          <div class="stat"><strong>10</strong><span>focused sections</span></div>
+          <div class="stat"><strong>1-click</strong><span>clipboard copy</span></div>
+          <div class="stat"><strong>local</strong><span>favorites saved in your browser</span></div>
+        </div>
+      </section>
+
+      <div class="empty" id="empty">No commands match your search.</div>
+      <div id="content"></div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">Copied</div>
+
+  <script>
+    const sections = [
+      {
+        id: "setup",
+        title: "Setup & Config",
+        items: [
+          ["Set your name", "git config --global user.name \"Name\"", "Stored in new commits."],
+          ["Set your email", "git config --global user.email \"email@example.com\"", "Use the email connected to your GitHub account."],
+          ["Use VS Code as editor", "git config --global core.editor \"code --wait\"", "Waits for the editor to close before continuing."],
+          ["List settings", "git config --list", "Add --show-origin to find where each value is set."],
+          ["Create alias", "git config --global alias.st status", "Run git st after creating this alias."]
+        ]
+      },
+      {
+        id: "basic",
+        title: "Basic Commands",
+        items: [
+          ["Initialize repository", "git init", "Creates a .git directory."],
+          ["Clone repository", "git clone <url>", "Copies files and history."],
+          ["Shallow clone", "git clone <url> --depth 1", "Fast clone with latest history only."],
+          ["Stage everything", "git add .", "Stages new, modified, and deleted paths."],
+          ["Stage selected hunks", "git add -p", "Review and stage patch by patch."],
+          ["Commit staged changes", "git commit -m \"message\"", "Records a snapshot."],
+          ["Amend last commit", "git commit --amend", "Edit message or include staged changes."],
+          ["Check status", "git status", "Shows working tree and index state."],
+          ["Diff unstaged changes", "git diff", "Working tree compared with index."],
+          ["Diff staged changes", "git diff --staged", "Index compared with HEAD."]
+        ]
+      },
+      {
+        id: "branching",
+        title: "Branching & Merging",
+        items: [
+          ["List branches", "git branch", "Shows local branches."],
+          ["Create branch", "git branch <name>", "Creates without switching."],
+          ["Switch branch", "git switch <name>", "Modern branch switch command."],
+          ["Create and switch", "git switch -c <name>", "Creates a branch from current HEAD."],
+          ["Legacy create and switch", "git checkout -b <name>", "Still common in many guides."],
+          ["Merge branch", "git merge <branch>", "Merges into the current branch."],
+          ["Merge without fast-forward", "git merge --no-ff <branch>", "Always creates a merge commit."],
+          ["Rebase branch", "git rebase <branch>", "Replays current commits on top."],
+          ["Interactive rebase", "git rebase -i HEAD~3", "Edit, squash, reorder commits."],
+          ["Delete branch", "git branch -d <name>", "Safe delete after merge."],
+          ["Force delete branch", "git branch -D <name>", "Deletes even if unmerged."]
+        ]
+      },
+      {
+        id: "remote",
+        title: "Remote & Sync",
+        items: [
+          ["List remotes", "git remote -v", "Shows fetch and push URLs."],
+          ["Add origin", "git remote add origin <url>", "Connects local repo to GitHub."],
+          ["Push branch", "git push origin <branch>", "Uploads commits."],
+          ["Set upstream", "git push -u origin <branch>", "Links local and remote branches."],
+          ["Safer force push", "git push --force-with-lease", "Refuses if remote has moved."],
+          ["Pull changes", "git pull", "Fetches and merges."],
+          ["Pull with rebase", "git pull --rebase", "Fetches and rebases local commits."],
+          ["Fetch only", "git fetch origin", "Updates remote-tracking refs."]
+        ]
+      },
+      {
+        id: "undoing",
+        title: "Undoing Changes",
+        items: [
+          ["Discard file changes", "git restore <file>", "Restores file from index."],
+          ["Unstage file", "git restore --staged <file>", "Keeps working tree changes."],
+          ["Undo last commit, keep work", "git reset HEAD~1", "Moves HEAD back and keeps changes."],
+          ["Delete last commit and work", "git reset --hard HEAD~1", "Destructive command."],
+          ["Revert safely", "git revert <commit>", "Creates an inverse commit."],
+          ["Clean untracked files", "git clean -fd", "Preview first with git clean -fdn."]
+        ]
+      },
+      {
+        id: "stash",
+        title: "Stash",
+        items: [
+          ["Save changes", "git stash", "Temporarily shelves tracked changes."],
+          ["Save with message", "git stash push -m \"message\"", "Names the stash entry."],
+          ["List stashes", "git stash list", "Shows stash references."],
+          ["Apply and drop latest", "git stash pop", "Applies then removes stash."],
+          ["Apply specific stash", "git stash apply stash@{0}", "Keeps stash in list."],
+          ["Drop stash", "git stash drop stash@{0}", "Deletes one stash."],
+          ["Clear all stashes", "git stash clear", "Deletes every stash."]
+        ]
+      },
+      {
+        id: "log",
+        title: "Log & Diff",
+        items: [
+          ["Compact log", "git log --oneline", "One line per commit."],
+          ["Graph log", "git log --oneline --graph", "Shows branch shape."],
+          ["Log with patches", "git log -p", "Includes diffs."],
+          ["Filter by author", "git log --author=\"Name\"", "Matches author metadata."],
+          ["Filter by date", "git log --since=\"2 weeks ago\"", "Uses natural language dates."],
+          ["Inspect commit", "git show <commit>", "Shows metadata and diff."],
+          ["Line history", "git blame <file>", "Finds the commit for each line."],
+          ["Contributor summary", "git shortlog -sn", "Counts commits by author."]
+        ]
+      },
+      {
+        id: "gh",
+        title: "GitHub CLI",
+        items: [
+          ["Create repo", "gh repo create", "Interactive repository creation."],
+          ["Clone repo", "gh repo clone <owner>/<repo>", "Clone through GitHub CLI."],
+          ["Create PR", "gh pr create", "Open a pull request."],
+          ["List PRs", "gh pr list", "Review open pull requests."],
+          ["Checkout PR", "gh pr checkout <number>", "Fetches a PR branch locally."],
+          ["Merge PR", "gh pr merge <number>", "Merge, squash, or rebase."],
+          ["Create issue", "gh issue create", "Open a new issue."],
+          ["List issues", "gh issue list", "Filter issues from the terminal."],
+          ["Create release", "gh release create", "Publish a release."],
+          ["Run workflow", "gh workflow run <name>", "Trigger GitHub Actions."],
+          ["Create gist", "gh gist create <file>", "Upload a gist."]
+        ]
+      },
+      {
+        id: "actions",
+        title: "GitHub Actions",
+        items: [
+          ["Workflow file", ".github/workflows/<name>.yml", "YAML workflows live here."],
+          ["Run on push", "on: [push]", "Trigger for every push."],
+          ["Run on pull request", "on: [pull_request]", "Run checks for PRs."],
+          ["Manual workflow", "on: workflow_dispatch", "Adds manual trigger."],
+          ["Checkout action", "uses: actions/checkout@v4", "Fetch repository contents."],
+          ["Node setup", "uses: actions/setup-node@v4", "Install and cache Node."],
+          ["Secret reference", "${{ secrets.NAME }}", "Read encrypted repository secret."]
+        ]
+      },
+      {
+        id: "tips",
+        title: "Tips & Tricks",
+        items: [
+          ["Empty commit", "git commit --allow-empty -m \"trigger CI\"", "Useful for rerunning automation."],
+          ["Cherry-pick", "git cherry-pick <commit>", "Bring over one commit."],
+          ["Create tag", "git tag v1.0.0", "Mark a release point."],
+          ["Push tag", "git push origin v1.0.0", "Upload one tag."],
+          ["Global gitignore", "git config --global core.excludesfile ~/.gitignore_global", "Ignore editor and OS files globally."],
+          ["Previous branch", "git switch -", "Jump back to the last branch."],
+          ["Restore file from branch", "git checkout <branch> -- <file>", "Copy one path from another branch."],
+          ["Compare everything with HEAD", "git diff HEAD", "Shows staged and unstaged diff."]
+        ]
+      }
+    ];
+
+    const els = {
+      content: document.querySelector("#content"),
+      tabs: document.querySelector("#tabs"),
+      search: document.querySelector("#search"),
+      empty: document.querySelector("#empty"),
+      toast: document.querySelector("#toast"),
+      themeToggle: document.querySelector("#themeToggle"),
+      favoritesToggle: document.querySelector("#favoritesToggle"),
+      commandCount: document.querySelector("#commandCount")
+    };
+
+    const state = {
+      query: "",
+      favoritesOnly: false,
+      favorites: new Set(JSON.parse(localStorage.getItem("git-cheatsheet:favorites") || "[]"))
+    };
+
+    const commandId = (sectionId, command) => `${sectionId}:${command}`;
+
+    function escapeHtml(value) {
+      return value.replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
+      })[char]);
+    }
+
+    function icon(name) {
+      const icons = {
+        copy: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" aria-hidden="true"><path d="M8 8h10v12H8zM6 16H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+        star: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" aria-hidden="true"><path d="m12 3 2.7 5.47 6.03.88-4.36 4.25 1.03 6-5.4-2.84-5.4 2.84 1.03-6-4.36-4.25 6.03-.88L12 3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>'
+      };
+      return icons[name];
+    }
+
+    function renderTabs() {
+      els.tabs.innerHTML = sections.map((section) => `<a class="tab" href="#${section.id}" data-tab="${section.id}">${section.title}</a>`).join("");
+    }
+
+    function render() {
+      const query = state.query.trim().toLowerCase();
+      const html = sections.map((section) => {
+        const filtered = section.items.filter(([scenario, command, note]) => {
+          const haystack = `${section.title} ${scenario} ${command} ${note}`.toLowerCase();
+          const favorite = state.favorites.has(commandId(section.id, command));
+          return (!query || haystack.includes(query)) && (!state.favoritesOnly || favorite);
+        });
+        if (!filtered.length) return "";
+
+        const cards = filtered.map(([scenario, command, note]) => {
+          const id = commandId(section.id, command);
+          const active = state.favorites.has(id) ? " active" : "";
+          return `
+            <article class="command" data-search="${escapeHtml(`${section.title} ${scenario} ${command} ${note}`.toLowerCase())}">
+              <div class="command-top">
+                <div class="scenario">${escapeHtml(scenario)}</div>
+                <button class="favorite-btn${active}" type="button" data-favorite="${escapeHtml(id)}" title="Toggle favorite">${icon("star")}</button>
+                <button class="copy-btn" type="button" data-copy="${escapeHtml(command)}" title="Copy command">${icon("copy")}</button>
+              </div>
+              <pre><code>${escapeHtml(command)}</code></pre>
+              <div class="note">${escapeHtml(note)}</div>
+            </article>
+          `;
+        }).join("");
+
+        return `
+          <section class="section" id="${section.id}">
+            <div class="section-header">
+              <h2>${section.title}</h2>
+              <span class="section-count">${filtered.length} items</span>
+            </div>
+            <div class="grid">${cards}</div>
+          </section>
+        `;
+      }).join("");
+
+      els.content.innerHTML = html;
+      els.empty.style.display = html ? "none" : "block";
+      els.commandCount.textContent = sections.reduce((sum, section) => sum + section.items.length, 0);
+    }
+
+    async function copyCommand(command) {
+      try {
+        await navigator.clipboard.writeText(command);
+      } catch {
+        const temp = document.createElement("textarea");
+        temp.value = command;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand("copy");
+        temp.remove();
+      }
+      els.toast.textContent = "Copied: " + command;
+      els.toast.classList.add("show");
+      window.setTimeout(() => els.toast.classList.remove("show"), 1300);
+    }
+
+    els.search.addEventListener("input", (event) => {
+      state.query = event.target.value;
+      render();
+    });
+
+    els.content.addEventListener("click", (event) => {
+      const copyButton = event.target.closest("[data-copy]");
+      const favoriteButton = event.target.closest("[data-favorite]");
+
+      if (copyButton) copyCommand(copyButton.dataset.copy);
+
+      if (favoriteButton) {
+        const id = favoriteButton.dataset.favorite;
+        if (state.favorites.has(id)) state.favorites.delete(id);
+        else state.favorites.add(id);
+        localStorage.setItem("git-cheatsheet:favorites", JSON.stringify([...state.favorites]));
+        render();
+      }
+    });
+
+    els.themeToggle.addEventListener("click", () => {
+      const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem("git-cheatsheet:theme", next);
+    });
+
+    els.favoritesToggle.addEventListener("click", () => {
+      state.favoritesOnly = !state.favoritesOnly;
+      els.favoritesToggle.style.borderColor = state.favoritesOnly ? "var(--accent)" : "var(--border)";
+      render();
+    });
+
+    const savedTheme = localStorage.getItem("git-cheatsheet:theme");
+    if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+
+    renderTabs();
+    render();
+  </script>
+</body>
+</html>
