@@ -10,91 +10,129 @@
   <meta property="og:type" content="website">
   <style>
     :root {
-      --bg: #0d1117;
-      --panel: #161b22;
-      --panel-2: #0f1720;
-      --text: #f0f6fc;
-      --muted: #8b949e;
-      --border: #30363d;
-      --accent: #238636;
-      --accent-2: #2f81f7;
-      --danger: #f85149;
-      --code: #101820;
-      --shadow: 0 16px 42px rgba(1, 4, 9, .35);
+      color-scheme: dark;
+      --bg: #080b10;
+      --surface: #0f141b;
+      --panel: #151b23;
+      --panel-2: #1c2430;
+      --text: #f3f7fb;
+      --muted: #9aa7b4;
+      --border: #2d3744;
+      --accent: #35c46a;
+      --accent-2: #58a6ff;
+      --accent-3: #e3b341;
+      --danger: #ff6b63;
+      --code: #070a0f;
+      --shadow: 0 22px 70px rgba(0, 0, 0, .4);
+      --ease-out: cubic-bezier(.22, 1, .36, 1);
+      --ease-move: cubic-bezier(.25, 1, .5, 1);
       --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-      --sans: "Aptos", "Segoe UI", system-ui, sans-serif;
+      --sans: "Segoe UI Variable", "Aptos", "Segoe UI", system-ui, sans-serif;
     }
 
     [data-theme="light"] {
-      --bg: #f6f8fa;
+      color-scheme: light;
+      --bg: #f3f6f8;
+      --surface: #ffffff;
       --panel: #ffffff;
-      --panel-2: #eef3f8;
+      --panel-2: #ecf2f7;
       --text: #1f2328;
-      --muted: #59636e;
-      --border: #d0d7de;
-      --accent: #1a7f37;
+      --muted: #5e6b78;
+      --border: #cad4df;
+      --accent: #188038;
       --accent-2: #0969da;
+      --accent-3: #9a6700;
       --danger: #cf222e;
-      --code: #f6f8fa;
-      --shadow: 0 16px 32px rgba(31, 35, 40, .09);
+      --code: #f7f9fb;
+      --shadow: 0 22px 54px rgba(31, 35, 40, .12);
+    }
+
+    [data-theme-switching] *,
+    [data-theme-switching] *::before,
+    [data-theme-switching] *::after {
+      transition: none !important;
     }
 
     * { box-sizing: border-box; }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg);
+    }
 
     body {
       margin: 0;
-      background: var(--bg);
+      min-width: 320px;
+      background:
+        linear-gradient(90deg, color-mix(in srgb, var(--accent) 10%, transparent) 1px, transparent 1px),
+        linear-gradient(0deg, color-mix(in srgb, var(--accent-2) 8%, transparent) 1px, transparent 1px),
+        radial-gradient(circle at 20% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 34rem),
+        radial-gradient(circle at 96% 16%, color-mix(in srgb, var(--accent-2) 12%, transparent), transparent 30rem),
+        var(--bg);
+      background-size: 72px 72px, 72px 72px, auto, auto, auto;
       color: var(--text);
       font-family: var(--sans);
       line-height: 1.5;
+      text-rendering: optimizeLegibility;
     }
 
     button, input { font: inherit; }
 
+    button:focus-visible,
+    input:focus-visible,
+    a:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--accent-2) 55%, transparent);
+      outline-offset: 3px;
+    }
+
     .app {
       min-height: 100vh;
       display: grid;
-      grid-template-columns: 280px minmax(0, 1fr);
+      grid-template-columns: minmax(250px, 18vw) minmax(0, 1fr);
     }
 
     .sidebar {
       position: sticky;
       top: 0;
       height: 100vh;
-      padding: 24px 18px;
-      background: color-mix(in srgb, var(--panel) 92%, transparent);
+      padding: clamp(18px, 2vw, 30px);
+      background:
+        linear-gradient(180deg, color-mix(in srgb, var(--panel) 94%, transparent), color-mix(in srgb, var(--surface) 92%, transparent)),
+        var(--panel);
       border-right: 1px solid var(--border);
       overflow-y: auto;
+      backdrop-filter: blur(18px);
+      z-index: 5;
     }
 
     .brand {
       display: grid;
-      grid-template-columns: 42px 1fr;
+      grid-template-columns: 46px 1fr;
       gap: 12px;
       align-items: center;
-      margin-bottom: 22px;
+      margin-bottom: 24px;
     }
 
     .mark {
-      width: 42px;
-      height: 42px;
+      width: 46px;
+      height: 46px;
       border-radius: 8px;
       display: grid;
       place-items: center;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      background:
+        linear-gradient(135deg, color-mix(in srgb, var(--accent) 90%, #fff), var(--accent-2));
       color: #fff;
       font-family: var(--mono);
       font-weight: 800;
-      box-shadow: var(--shadow);
+      box-shadow: 0 12px 30px color-mix(in srgb, var(--accent) 28%, transparent);
+      transform: rotate(-2deg);
     }
 
     h1, h2, h3, p { margin-top: 0; }
 
     h1 {
       margin-bottom: 2px;
-      font-size: 18px;
+      font-size: clamp(17px, 1.2vw, 20px);
       letter-spacing: 0;
     }
 
@@ -106,18 +144,19 @@
 
     .search {
       position: relative;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .search input {
       width: 100%;
-      min-height: 42px;
+      min-height: 46px;
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 10px 12px 10px 36px;
       color: var(--text);
-      background: var(--bg);
+      background: color-mix(in srgb, var(--bg) 76%, var(--panel));
       outline: none;
+      transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
     }
 
     .search input:focus {
@@ -128,10 +167,11 @@
     .search svg {
       position: absolute;
       left: 12px;
-      top: 12px;
+      top: 14px;
       width: 18px;
       height: 18px;
       color: var(--muted);
+      pointer-events: none;
     }
 
     .controls {
@@ -147,14 +187,19 @@
     .tab {
       border: 1px solid var(--border);
       border-radius: 8px;
-      background: var(--panel);
+      background: color-mix(in srgb, var(--panel) 90%, var(--bg));
       color: var(--text);
       cursor: pointer;
-      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+      transition:
+        transform 160ms var(--ease-out),
+        border-color 160ms ease,
+        background-color 160ms ease,
+        color 160ms ease,
+        opacity 160ms ease;
     }
 
     .control-btn {
-      min-height: 38px;
+      min-height: 40px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -167,7 +212,14 @@
     .favorite-btn:hover,
     .tab:hover {
       border-color: var(--accent-2);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+    }
+
+    .control-btn:active,
+    .copy-btn:active,
+    .favorite-btn:active,
+    .tab:active {
+      transform: translateY(0) scale(.98);
     }
 
     .tabs {
@@ -180,71 +232,123 @@
       padding: 8px 10px;
       text-align: left;
       color: var(--muted);
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tab::before {
+      content: "";
+      position: absolute;
+      inset: 8px auto 8px 8px;
+      width: 3px;
+      border-radius: 99px;
+      background: var(--accent);
+      opacity: 0;
+      transform: scaleY(.35);
+      transition: opacity 180ms ease, transform 220ms var(--ease-out);
     }
 
     .tab.active {
-      color: #fff;
-      background: var(--accent);
-      border-color: var(--accent);
+      color: var(--text);
+      background: color-mix(in srgb, var(--accent) 16%, var(--panel));
+      border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+      padding-left: 18px;
+    }
+
+    .tab.active::before {
+      opacity: 1;
+      transform: scaleY(1);
     }
 
     main {
       min-width: 0;
-      padding: 34px;
+      padding: clamp(18px, 4vw, 56px);
     }
 
     .hero {
       display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr);
-      gap: 24px;
+      grid-template-columns: minmax(0, 1.15fr) minmax(280px, .85fr);
+      gap: clamp(16px, 2.4vw, 30px);
       align-items: stretch;
-      margin-bottom: 24px;
+      margin-bottom: clamp(22px, 3vw, 38px);
+      animation: hero-in 620ms var(--ease-out) both;
     }
 
     .hero-copy {
-      padding: 30px;
+      min-height: 330px;
+      padding: clamp(24px, 4vw, 54px);
       border: 1px solid var(--border);
       border-radius: 8px;
       background:
-        linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, transparent), transparent 42%),
+        linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, transparent), transparent 46%),
+        linear-gradient(315deg, color-mix(in srgb, var(--accent-2) 14%, transparent), transparent 38%),
         var(--panel);
       box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .hero-copy::after {
+      content: "git status";
+      position: absolute;
+      right: clamp(18px, 4vw, 48px);
+      bottom: clamp(14px, 3vw, 36px);
+      padding: 10px 12px;
+      border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--border));
+      border-radius: 8px;
+      color: color-mix(in srgb, var(--accent) 88%, #fff);
+      background: color-mix(in srgb, var(--code) 88%, transparent);
+      font-family: var(--mono);
+      font-size: 13px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, .24);
+      opacity: .9;
+      transform: rotate(-1deg);
+      animation: console-float 4s var(--ease-move) infinite alternate;
     }
 
     .hero h2 {
       margin-bottom: 12px;
-      font-size: clamp(32px, 5vw, 58px);
-      line-height: 1;
+      max-width: 11ch;
+      font-size: clamp(36px, 6.2vw, 86px);
+      line-height: .95;
       letter-spacing: 0;
     }
 
     .hero p {
-      max-width: 64ch;
+      max-width: 58ch;
       color: var(--muted);
       margin-bottom: 0;
       font-size: 17px;
+      position: relative;
+      z-index: 1;
     }
 
     .stats {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      gap: clamp(10px, 1.2vw, 14px);
     }
 
     .stat {
-      padding: 18px;
+      padding: clamp(16px, 2vw, 22px);
       border: 1px solid var(--border);
       border-radius: 8px;
-      background: var(--panel);
-      min-height: 108px;
+      background:
+        linear-gradient(180deg, color-mix(in srgb, var(--panel-2) 68%, transparent), var(--panel));
+      min-height: 128px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, .04) inset;
+      animation: card-in 520ms var(--ease-out) both;
+      animation-delay: calc(var(--i, 0) * 55ms + 160ms);
     }
 
     .stat strong {
       display: block;
-      font-size: 28px;
+      font-size: clamp(26px, 3vw, 36px);
       line-height: 1;
     }
 
@@ -254,8 +358,16 @@
     }
 
     .section {
-      margin: 0 0 28px;
+      margin: 0 0 clamp(26px, 4vw, 46px);
       scroll-margin-top: 18px;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out);
+    }
+
+    .section.is-visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .section-header {
@@ -268,7 +380,7 @@
 
     .section h2 {
       margin-bottom: 0;
-      font-size: 24px;
+      font-size: clamp(22px, 2.5vw, 34px);
       letter-spacing: 0;
     }
 
@@ -280,21 +392,40 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+      gap: clamp(10px, 1.2vw, 16px);
     }
 
     .command {
       min-width: 0;
       border: 1px solid var(--border);
       border-radius: 8px;
-      background: var(--panel);
+      background:
+        linear-gradient(180deg, color-mix(in srgb, var(--panel-2) 52%, transparent), transparent),
+        var(--panel);
       box-shadow: 0 1px 0 rgba(255,255,255,.02) inset;
       overflow: hidden;
+      transform: translateY(0);
+      transition:
+        transform 220ms var(--ease-out),
+        border-color 180ms ease,
+        box-shadow 220ms ease,
+        background-color 180ms ease;
+      animation: card-in 420ms var(--ease-out) both;
+      animation-delay: min(calc(var(--i, 0) * 26ms), 280ms);
+      container-type: inline-size;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .command:hover {
+        transform: translateY(-4px);
+        border-color: color-mix(in srgb, var(--accent-2) 48%, var(--border));
+        box-shadow: 0 16px 38px rgba(0, 0, 0, .22);
+      }
     }
 
     .command-top {
-      min-height: 54px;
+      min-height: 58px;
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto auto;
       gap: 8px;
@@ -307,6 +438,7 @@
       min-width: 0;
       font-weight: 700;
       overflow-wrap: anywhere;
+      line-height: 1.25;
     }
 
     .favorite-btn,
@@ -316,6 +448,7 @@
       display: grid;
       place-items: center;
       color: var(--muted);
+      flex: 0 0 auto;
     }
 
     .favorite-btn.active {
@@ -326,9 +459,10 @@
 
     pre {
       margin: 0;
-      padding: 14px;
+      padding: 14px 14px 15px;
       background: var(--code);
       overflow-x: auto;
+      scrollbar-width: thin;
     }
 
     code {
@@ -339,7 +473,7 @@
     }
 
     .note {
-      min-height: 44px;
+      min-height: 46px;
       padding: 10px 12px;
       color: var(--muted);
       font-size: 13px;
@@ -347,7 +481,7 @@
 
     .empty {
       display: none;
-      padding: 26px;
+      padding: 32px;
       border: 1px dashed var(--border);
       border-radius: 8px;
       color: var(--muted);
@@ -359,46 +493,221 @@
       position: fixed;
       right: 18px;
       bottom: 18px;
-      padding: 10px 12px;
+      max-width: min(520px, calc(100vw - 36px));
+      padding: 11px 13px;
       border-radius: 8px;
       color: #fff;
-      background: var(--accent);
+      background: color-mix(in srgb, var(--accent) 84%, #063d1b);
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(12px) scale(.96);
       pointer-events: none;
-      transition: opacity .18s ease, transform .18s ease;
+      transition: opacity 180ms ease, transform 220ms var(--ease-out);
       z-index: 20;
+      overflow-wrap: anywhere;
     }
 
     .toast.show {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0) scale(1);
     }
 
     .hidden { display: none !important; }
 
-    @media (max-width: 900px) {
-      .app { grid-template-columns: 1fr; }
-      .sidebar {
-        position: static;
-        height: auto;
-        border-right: 0;
-        border-bottom: 1px solid var(--border);
+    @keyframes hero-in {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
       }
-      .tabs {
-        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
-      main { padding: 22px 16px; }
-      .hero { grid-template-columns: 1fr; }
     }
 
-    @media (max-width: 560px) {
-      .hero-copy { padding: 22px; }
-      .stats { grid-template-columns: 1fr; }
-      .grid { grid-template-columns: 1fr; }
+    @keyframes card-in {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes console-float {
+      from { transform: translateY(0) rotate(-1deg); }
+      to { transform: translateY(-8px) rotate(1deg); }
+    }
+
+    @media (min-width: 1180px) {
+      main {
+        padding-right: max(56px, calc((100vw - 1360px) / 2 + 56px));
+      }
+
+      .grid {
+        grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      }
+    }
+
+    @media (max-width: 1020px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        height: auto;
+        display: grid;
+        grid-template-columns: minmax(210px, .8fr) minmax(260px, 1fr);
+        gap: 14px;
+        align-items: start;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+        padding: 14px 16px;
+      }
+
+      .brand,
+      .search,
+      .controls {
+        margin-bottom: 0;
+      }
+
+      .search {
+        grid-column: 2;
+        grid-row: 1;
+      }
+
+      .controls {
+        grid-column: 1;
+        grid-row: 2;
+      }
+
+      .tabs {
+        grid-column: 2;
+        grid-row: 2;
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        scroll-snap-type: x proximity;
+      }
+
+      .tab {
+        flex: 0 0 auto;
+        min-width: max-content;
+        scroll-snap-align: start;
+      }
+
+      main {
+        padding: 22px 16px 40px;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-copy {
+        min-height: 260px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      body {
+        background-size: 46px 46px, 46px 46px, auto, auto, auto;
+      }
+
+      .sidebar {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .brand,
+      .search,
+      .controls,
+      .tabs {
+        grid-column: auto;
+        grid-row: auto;
+      }
+
+      .brand {
+        grid-template-columns: 38px 1fr;
+      }
+
+      .mark {
+        width: 38px;
+        height: 38px;
+      }
+
+      .controls {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .hero-copy {
+        min-height: 310px;
+        padding: 22px;
+      }
+
+      .hero-copy::after {
+        left: 22px;
+        right: auto;
+        bottom: 20px;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .stat {
+        min-height: 112px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
       .section-header {
         align-items: start;
         flex-direction: column;
+        gap: 4px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .command-top {
+        grid-template-columns: minmax(0, 1fr) auto auto;
+      }
+
+      code {
+        font-size: 12px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+      }
+
+      .section {
+        opacity: 1;
+        transform: none;
       }
     }
   </style>
@@ -434,10 +743,10 @@
           <p>Search, copy, favorite, and jump between Git basics, branching, remotes, undo flows, GitHub CLI, and Actions without leaving the page.</p>
         </div>
         <div class="stats" aria-label="Cheat sheet coverage">
-          <div class="stat"><strong id="commandCount">0</strong><span>commands and workflow snippets</span></div>
-          <div class="stat"><strong>10</strong><span>focused sections</span></div>
-          <div class="stat"><strong>1-click</strong><span>clipboard copy</span></div>
-          <div class="stat"><strong>local</strong><span>favorites saved in your browser</span></div>
+          <div class="stat" style="--i: 0"><strong id="commandCount">0</strong><span>commands and workflow snippets</span></div>
+          <div class="stat" style="--i: 1"><strong>10</strong><span>focused sections</span></div>
+          <div class="stat" style="--i: 2"><strong>1-click</strong><span>clipboard copy</span></div>
+          <div class="stat" style="--i: 3"><strong>local</strong><span>favorites saved in your browser</span></div>
         </div>
       </section>
 
@@ -611,6 +920,8 @@
     };
 
     const commandId = (sectionId, command) => `${sectionId}:${command}`;
+    let revealObserver;
+    let activeObserver;
 
     function escapeHtml(value) {
       return value.replace(/[&<>"']/g, (char) => ({
@@ -631,7 +942,41 @@
     }
 
     function renderTabs() {
-      els.tabs.innerHTML = sections.map((section) => `<a class="tab" href="#${section.id}" data-tab="${section.id}">${section.title}</a>`).join("");
+      els.tabs.innerHTML = sections.map((section, index) => `<a class="tab${index === 0 ? " active" : ""}" href="#${section.id}" data-tab="${section.id}">${section.title}</a>`).join("");
+    }
+
+    function syncActiveTab(id) {
+      els.tabs.querySelectorAll(".tab").forEach((tab) => {
+        tab.classList.toggle("active", tab.dataset.tab === id);
+      });
+    }
+
+    function observeSections() {
+      const sectionEls = [...document.querySelectorAll(".section")];
+      if (revealObserver) revealObserver.disconnect();
+      if (activeObserver) activeObserver.disconnect();
+
+      if (!("IntersectionObserver" in window)) {
+        sectionEls.forEach((section) => section.classList.add("is-visible"));
+        return;
+      }
+
+      revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) entry.target.classList.add("is-visible");
+        });
+      }, { rootMargin: "0px 0px -12% 0px", threshold: .08 });
+
+      sectionEls.forEach((section) => revealObserver.observe(section));
+
+      activeObserver = new IntersectionObserver((entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) syncActiveTab(visible.target.id);
+      }, { rootMargin: "-18% 0px -68% 0px", threshold: [.1, .35, .6] });
+
+      sectionEls.forEach((section) => activeObserver.observe(section));
     }
 
     function render() {
@@ -644,11 +989,11 @@
         });
         if (!filtered.length) return "";
 
-        const cards = filtered.map(([scenario, command, note]) => {
+        const cards = filtered.map(([scenario, command, note], index) => {
           const id = commandId(section.id, command);
           const active = state.favorites.has(id) ? " active" : "";
           return `
-            <article class="command" data-search="${escapeHtml(`${section.title} ${scenario} ${command} ${note}`.toLowerCase())}">
+            <article class="command" style="--i: ${index}" data-search="${escapeHtml(`${section.title} ${scenario} ${command} ${note}`.toLowerCase())}">
               <div class="command-top">
                 <div class="scenario">${escapeHtml(scenario)}</div>
                 <button class="favorite-btn${active}" type="button" data-favorite="${escapeHtml(id)}" title="Toggle favorite">${icon("star")}</button>
@@ -674,6 +1019,7 @@
       els.content.innerHTML = html;
       els.empty.style.display = html ? "none" : "block";
       els.commandCount.textContent = sections.reduce((sum, section) => sum + section.items.length, 0);
+      observeSections();
     }
 
     async function copyCommand(command) {
@@ -714,8 +1060,10 @@
 
     els.themeToggle.addEventListener("click", () => {
       const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      document.documentElement.dataset.themeSwitching = "true";
       document.documentElement.dataset.theme = next;
       localStorage.setItem("git-cheatsheet:theme", next);
+      window.setTimeout(() => delete document.documentElement.dataset.themeSwitching, 80);
     });
 
     els.favoritesToggle.addEventListener("click", () => {
