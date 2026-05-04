@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Git & GitHub Cheat Sheet</title>
-  <meta name="description" content="A searchable Git and GitHub cheat sheet with commands, workflows, GitHub CLI, Actions, copy buttons, and favorites.">
+  <meta name="description" content="A searchable Git and GitHub cheat sheet with commands, workflows, GitHub CLI, Actions, and copy buttons.">
   <meta property="og:title" content="Git & GitHub Cheat Sheet">
   <meta property="og:description" content="Commands, workflows, GitHub CLI, and Actions in one interactive reference.">
   <meta property="og:type" content="website">
@@ -176,14 +176,13 @@
 
     .controls {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 8px;
       margin-bottom: 18px;
     }
 
     .control-btn,
     .copy-btn,
-    .favorite-btn,
     .tab {
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -209,7 +208,6 @@
 
     .control-btn:hover,
     .copy-btn:hover,
-    .favorite-btn:hover,
     .tab:hover {
       border-color: var(--accent-2);
       transform: translateY(-2px);
@@ -217,7 +215,6 @@
 
     .control-btn:active,
     .copy-btn:active,
-    .favorite-btn:active,
     .tab:active {
       transform: translateY(0) scale(.98);
     }
@@ -427,7 +424,7 @@
     .command-top {
       min-height: 58px;
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto auto;
+      grid-template-columns: minmax(0, 1fr) auto;
       gap: 8px;
       align-items: center;
       padding: 12px;
@@ -441,7 +438,6 @@
       line-height: 1.25;
     }
 
-    .favorite-btn,
     .copy-btn {
       width: 34px;
       height: 34px;
@@ -449,12 +445,6 @@
       place-items: center;
       color: var(--muted);
       flex: 0 0 auto;
-    }
-
-    .favorite-btn.active {
-      color: #f2cc60;
-      border-color: #9e6a03;
-      background: color-mix(in srgb, #f2cc60 12%, var(--panel));
     }
 
     pre {
@@ -640,10 +630,6 @@
         height: 38px;
       }
 
-      .controls {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
       .hero-copy {
         min-height: 310px;
         padding: 22px;
@@ -684,7 +670,7 @@
       }
 
       .command-top {
-        grid-template-columns: minmax(0, 1fr) auto auto;
+        grid-template-columns: minmax(0, 1fr) auto;
       }
 
       code {
@@ -730,7 +716,6 @@
 
       <div class="controls">
         <button class="control-btn" id="themeToggle" type="button" title="Toggle theme">Theme</button>
-        <button class="control-btn" id="favoritesToggle" type="button" title="Show favorites">Favorites</button>
       </div>
 
       <nav class="tabs" id="tabs"></nav>
@@ -740,13 +725,13 @@
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-copy">
           <h2 id="hero-title">Find the Git command for the situation in front of you.</h2>
-          <p>Search, copy, favorite, and jump between Git basics, branching, remotes, undo flows, GitHub CLI, and Actions without leaving the page.</p>
+          <p>Search, copy, and jump between Git basics, branching, remotes, undo flows, GitHub CLI, and Actions without leaving the page.</p>
         </div>
         <div class="stats" aria-label="Cheat sheet coverage">
           <div class="stat" style="--i: 0"><strong id="commandCount">0</strong><span>commands and workflow snippets</span></div>
           <div class="stat" style="--i: 1"><strong>10</strong><span>focused sections</span></div>
           <div class="stat" style="--i: 2"><strong>1-click</strong><span>clipboard copy</span></div>
-          <div class="stat" style="--i: 3"><strong>local</strong><span>favorites saved in your browser</span></div>
+          <div class="stat" style="--i: 3"><strong>zero</strong><span>build tools required</span></div>
         </div>
       </section>
 
@@ -909,17 +894,13 @@
       empty: document.querySelector("#empty"),
       toast: document.querySelector("#toast"),
       themeToggle: document.querySelector("#themeToggle"),
-      favoritesToggle: document.querySelector("#favoritesToggle"),
       commandCount: document.querySelector("#commandCount")
     };
 
     const state = {
-      query: "",
-      favoritesOnly: false,
-      favorites: new Set(JSON.parse(localStorage.getItem("git-cheatsheet:favorites") || "[]"))
+      query: ""
     };
 
-    const commandId = (sectionId, command) => `${sectionId}:${command}`;
     let revealObserver;
     let activeObserver;
 
@@ -935,8 +916,7 @@
 
     function icon(name) {
       const icons = {
-        copy: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" aria-hidden="true"><path d="M8 8h10v12H8zM6 16H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
-        star: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" aria-hidden="true"><path d="m12 3 2.7 5.47 6.03.88-4.36 4.25 1.03 6-5.4-2.84-5.4 2.84 1.03-6-4.36-4.25 6.03-.88L12 3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>'
+        copy: '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" aria-hidden="true"><path d="M8 8h10v12H8zM6 16H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>'
       };
       return icons[name];
     }
@@ -984,19 +964,15 @@
       const html = sections.map((section) => {
         const filtered = section.items.filter(([scenario, command, note]) => {
           const haystack = `${section.title} ${scenario} ${command} ${note}`.toLowerCase();
-          const favorite = state.favorites.has(commandId(section.id, command));
-          return (!query || haystack.includes(query)) && (!state.favoritesOnly || favorite);
+          return !query || haystack.includes(query);
         });
         if (!filtered.length) return "";
 
         const cards = filtered.map(([scenario, command, note], index) => {
-          const id = commandId(section.id, command);
-          const active = state.favorites.has(id) ? " active" : "";
           return `
             <article class="command" style="--i: ${index}" data-search="${escapeHtml(`${section.title} ${scenario} ${command} ${note}`.toLowerCase())}">
               <div class="command-top">
                 <div class="scenario">${escapeHtml(scenario)}</div>
-                <button class="favorite-btn${active}" type="button" data-favorite="${escapeHtml(id)}" title="Toggle favorite">${icon("star")}</button>
                 <button class="copy-btn" type="button" data-copy="${escapeHtml(command)}" title="Copy command">${icon("copy")}</button>
               </div>
               <pre><code>${escapeHtml(command)}</code></pre>
@@ -1045,17 +1021,8 @@
 
     els.content.addEventListener("click", (event) => {
       const copyButton = event.target.closest("[data-copy]");
-      const favoriteButton = event.target.closest("[data-favorite]");
 
       if (copyButton) copyCommand(copyButton.dataset.copy);
-
-      if (favoriteButton) {
-        const id = favoriteButton.dataset.favorite;
-        if (state.favorites.has(id)) state.favorites.delete(id);
-        else state.favorites.add(id);
-        localStorage.setItem("git-cheatsheet:favorites", JSON.stringify([...state.favorites]));
-        render();
-      }
     });
 
     els.themeToggle.addEventListener("click", () => {
@@ -1064,12 +1031,6 @@
       document.documentElement.dataset.theme = next;
       localStorage.setItem("git-cheatsheet:theme", next);
       window.setTimeout(() => delete document.documentElement.dataset.themeSwitching, 80);
-    });
-
-    els.favoritesToggle.addEventListener("click", () => {
-      state.favoritesOnly = !state.favoritesOnly;
-      els.favoritesToggle.style.borderColor = state.favoritesOnly ? "var(--accent)" : "var(--border)";
-      render();
     });
 
     const savedTheme = localStorage.getItem("git-cheatsheet:theme");
